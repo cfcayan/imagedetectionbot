@@ -79,7 +79,7 @@ bot.on('message', (msg) => {
           }
 
           let buf = c1.toBuffer();
-          fs.writeFileSync(msg.message_id + ".jpg", buf);
+          // fs.writeFileSync(msg.message_id + ".jpg", buf);
           bot.sendPhoto(msg.chat.id, buf).then(()=>{
             console.log("photo send");
           }).catch((error)=> {
