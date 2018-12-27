@@ -8,6 +8,7 @@ const bot = new TelegramBot(token, {polling: true});
 // Load the binding
 const tfnode = require('@tensorflow/tfjs-node');
 const {createCanvas, Image} = require('canvas');
+const fs = require("fs");
 
 // Or if running with GPU:
 // import '@tensorflow/tfjs-node-gpu';
@@ -56,6 +57,33 @@ bot.on('message', (msg) => {
 
           result.forEach((element)=>{
             bot.sendMessage(msg.chat.id, 'found a ' + element.class);
+          });
+
+
+          const c1 = createCanvas(p.width, p.height);
+          const context = c1.getContext('2d');
+          context.drawImage(img, 0, 0);
+          context.font = '10px Arial';
+
+          console.log('number of detections: ', result.length, result);
+          for (let i = 0; i < result.length; i++) {
+            context.beginPath();
+            context.rect(...result[i].bbox);
+            context.lineWidth = 1;
+            context.strokeStyle = 'green';
+            context.fillStyle = 'green';
+            context.stroke();
+            context.fillText(
+                result[i].score.toFixed(3) + ' ' + result[i].class, result[i].bbox[0],
+                result[i].bbox[1] > 10 ? result[i].bbox[1] - 5 : 10);
+          }
+
+          let buf = c1.toBuffer();
+          fs.writeFileSync(msg.message_id + ".jpg", buf);
+          bot.sendPhoto(msg.chat.id, buf).then(()=>{
+            console.log("photo send");
+          }).catch((error)=> {
+            console.error("error", error);
           });
         }).catch((error) => {
           console.log('error', error);
