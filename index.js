@@ -56,20 +56,20 @@ bot.on('message', (msg) => {
           console.log('cooooool', result);
 
           result.forEach((element)=>{
-            bot.sendMessage(msg.chat.id, 'found a ' + element.class);
+            bot.sendMessage(msg.chat.id, 'found a ' + element.class + " (" + getRating(element.score) + ")");
           });
 
 
           const c1 = createCanvas(p.width, p.height);
           const context = c1.getContext('2d');
           context.drawImage(img, 0, 0);
-          context.font = '10px Arial';
+          context.font = '14px Arial';
 
           console.log('number of detections: ', result.length, result);
           for (let i = 0; i < result.length; i++) {
             context.beginPath();
             context.rect(...result[i].bbox);
-            context.lineWidth = 1;
+            context.lineWidth = 3;
             context.strokeStyle = 'green';
             context.fillStyle = 'green';
             context.stroke();
@@ -100,6 +100,19 @@ bot.on('message', (msg) => {
   }
 });
 
+function getRating( number) {
+  if (number<=.6) {
+    return "not sure";
+  } else if (number>.6 && number <= .7) {
+    return "very likely";
+  } else if ( number > .7 && number <=.8 ) {
+    return "quite sure";
+  } else if (number > .8 && number <=.9) {
+    return "sure";
+  } else {
+    return "safe";
+  }
+}
 
 bot.onText(/\/start/, (msg) => {
   bot.sendMessage(msg.chat.id, 'Welcome');
