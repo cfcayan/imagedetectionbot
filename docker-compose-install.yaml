@@ -9,5 +9,5 @@ services:
     - BOT_TOKEN="$BOT_TOKEN"
     volumes:
     - ./:/home/node/app
-    command: "npm start"
+    command: "npm install"
     restart: always

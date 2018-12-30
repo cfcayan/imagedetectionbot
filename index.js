@@ -3,12 +3,16 @@
 const cocoSsd = require('@tensorflow-models/coco-ssd');
 const tf = require('@tensorflow/tfjs');
 const TelegramBot = require('node-telegram-bot-api');
-const token = '717272330:AAGzD3QYCx3BT22xekjjlFyp9sRhswSrnL0';
+const token = process.env.BOT_TOKEN;
 const bot = new TelegramBot(token, {polling: true});
 // Load the binding
 const tfnode = require('@tensorflow/tfjs-node');
 const {createCanvas, Image} = require('canvas');
-const fs = require("fs");
+const fs = require('fs');
+
+if (!token) {
+  throw (new Error('no bot token'));
+}
 
 // Or if running with GPU:
 // import '@tensorflow/tfjs-node-gpu';
@@ -55,8 +59,8 @@ bot.on('message', (msg) => {
         model.detect(canvas).then((result) => {
           console.log('cooooool', result);
 
-          result.forEach((element)=>{
-            bot.sendMessage(msg.chat.id, 'found a ' + element.class + " (" + getRating(element.score) + ")");
+          result.forEach((element) => {
+            bot.sendMessage(msg.chat.id, 'found a ' + element.class + ' (' + getRating(element.score) + ')');
           });
 
 
@@ -80,64 +84,41 @@ bot.on('message', (msg) => {
 
           let buf = c1.toBuffer();
           // fs.writeFileSync(msg.message_id + ".jpg", buf);
-          bot.sendPhoto(msg.chat.id, buf).then(()=>{
-            console.log("photo send");
-          }).catch((error)=> {
-            console.error("error", error);
+          bot.sendPhoto(msg.chat.id, buf).then(() => {
+            console.log('photo send');
+          }).catch((error) => {
+            console.error('error', error);
           });
         }).catch((error) => {
           console.log('error', error);
         });
       };
-
-
-      //   getDataUri(file).then((r)=>{
-      //     console.log('got image', r);
-      //   }).catch();
-      // }).catch((error) => {
-      //   console.error('e', error);
     });
   }
 });
 
-function getRating( number) {
-  if (number<=.6) {
-    return "not sure";
-  } else if (number>.6 && number <= .7) {
-    return "very likely";
-  } else if ( number > .7 && number <=.8 ) {
-    return "quite sure";
-  } else if (number > .8 && number <=.9) {
-    return "sure";
+function getRating(number) {
+  if (number <= .6) {
+    return 'not sure';
+  } else if (number > .6 && number <= .7) {
+    return 'very likely';
+  } else if (number > .7 && number <= .8) {
+    return 'quite sure';
+  } else if (number > .8 && number <= .9) {
+    return 'sure';
   } else {
-    return "safe";
+    return 'safe';
   }
 }
 
 bot.onText(/\/start/, (msg) => {
-  bot.sendMessage(msg.chat.id, 'Welcome');
+  bot.sendMessage(msg.chat.id, 'Welcome. Send this Bot a photo and it will' +
+      ' detect the objects on the photo. It will answer you with a list of' +
+      ' objects as well as your photo with the detected objects marked on' +
+      ' it.\n\nAt the moment it detects 90 objects like cup, bottle,' +
+      ' etc...\n\nHave' +
+      ' fun!');
 });
 
 
-function getDataUri(url) {
-  return new Promise((resolve, reject) => {
-    let image = new Image();
 
-    image.onload = function() {
-      // let canvas = document.createElement('canvas');
-      let canvas = Canvas.createCanvas();
-      canvas.width = this.naturalWidth; // or 'width' if you want a special/scaled size
-      canvas.height = this.naturalHeight; // or 'height' if you want a special/scaled size
-
-      canvas.getContext('2d').drawImage(this, 0, 0);
-
-      // Get raw image data
-      // callback(canvas.toDataURL('image/png').replace(/^data:image\/(png|jpg);base64,/, ''));
-      // ... or get as Data URI
-      callback(canvas.toDataURL('image/png'));
-      resolve(canvas.toDataURL('image/png'));
-    };
-
-    image.src = url;
-  });
-}
