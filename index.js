@@ -10,7 +10,6 @@ const tfnode = require('@tensorflow/tfjs-node');
 const {createCanvas, Image} = require('canvas');
 const fs = require('fs');
 
-
 console.log("token", token);
 if (!token) {
   throw (new Error('no bot token'));
@@ -85,7 +84,7 @@ bot.on('message', (msg) => {
           }
 
           let buf = c1.toBuffer();
-          // fs.writeFileSync(msg.message_id + ".jpg", buf);
+          // fs.writeFileSync("results/msg.message_id + ".jpg", buf);
           bot.sendPhoto(msg.chat.id, buf).then(() => {
             console.log('photo send');
           }).catch((error) => {

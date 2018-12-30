@@ -6,7 +6,7 @@ services:
     working_dir: /home/node/app
     environment:
     - NODE_ENV=production
-    - BOT_TOKEN="$BOT_TOKEN"
+    - BOT_TOKEN=$BOT_TOKEN
     volumes:
     - ./:/home/node/app
     command: "npm install"
