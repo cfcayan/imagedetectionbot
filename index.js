@@ -10,6 +10,8 @@ const tfnode = require('@tensorflow/tfjs-node');
 const {createCanvas, Image} = require('canvas');
 const fs = require('fs');
 
+
+console.log("token", token);
 if (!token) {
   throw (new Error('no bot token'));
 }
